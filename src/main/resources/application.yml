@@ -1,0 +1,35 @@
+server:
+  servlet:
+    context-path: /c-terminal
+spring:
+  profiles:
+    active: dev
+  #字符设置
+  http:
+    encoding:
+      charset: utf-8
+      enabled: true
+  thymeleaf:
+    mode: HTML5
+    encoding: utf-8
+    servlet:
+      content-type: text/html
+    cache: false  #开发时关闭缓存,不然没法看到实时页面
+    prefix: classpath:/templates/ #配置前缀
+    suffix: .html #配置后缀
+
+mybatis:
+  mapper-locations: classpath:mapping/*.xml #mapper映射xml文件的所在路径
+  type-aliases-package: com.unicom.api.cterminal.entity #实体类映射文件的所在路径
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl #打印sql
+
+# 分页配置
+pagehelper:
+  helper-dialect: mysql #指定数据库，不指定的话会默认自动检测数据库类型
+  reasonable: true #是否启用分页合理化。
+  support-methods-arguments: true
+  params: count=countSql
+
+logging:
+  config: classpath:logback-spring.xml

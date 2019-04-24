@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    首页
+    <!-- th:text :用来替换文本-->
+    <p th:text="'姓名是：'+${name}">张三</p>
+    <!-- 运算符：+, -, *, /, % -->
+    <p th:text="'编号是：'+${user.user_id - 0}"></p>
+    <!-- 逻辑运算符：>, <, >=, <= != 对应(gt, lt, ge, le, ne) -->
+    <p th:text="${user.user_id >= 1}">aaa</p>
+    <!-- 条件判断：th:if：条件成立显示，th:unless：条件不成立显示，th:switch：switch：判断条件，case执行结果 -->
+    <p th:if="${user.user_status eq 1}">正常状态</p>
+    <p th:unless="${user.user_status eq 0}">创建未认证</p>
+    <div th:switch="${user.user_id}">
+        <p th:case="1">hzy</p>
+        <p th:case="2">tom</p>
+        <p th:case="*">张三</p>
+    </div>
+    <!-- 循环语句 -->
+    <div th:each="user,item:${userList}">
+        <p th:text="${user.user_id}">2</p>
+        <p th:text="${user.user_name}">张三</p>
+    </div>
+    <p><a th:href="@{/index}" target="_blank">百度一下</a></p>
+</body>
+</html>
