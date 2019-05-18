@@ -77,6 +77,7 @@ public class ErrorInfoBuilder implements HandlerExceptionResolver, Ordered{
      */
     public ErrorInfo getErrorInfo(HttpServletRequest request, Throwable error) {
         logger.error("------------------记录异常时间："+DateUtil.getTime());
+        logger.error("------------------记录异常code："+getHttpStatus(request).value());
         logger.error("------------------记录异常URL："+getPath(request));
         logger.error("------------------记录异常类型："+error.toString());
         logger.error("------------------记录堆栈信息："+getStackTraceInfo(error, isIncludeStackTrace(request)));
@@ -121,6 +122,7 @@ public class ErrorInfoBuilder implements HandlerExceptionResolver, Ordered{
 
     /**
      * 出现异常的请求路径
+     * errorAttributesData对象也可以获取到url，code，errorMsg,堆栈一些错误信息,可以用该对象获取
      *
      */
     public String getPath(HttpServletRequest request) {

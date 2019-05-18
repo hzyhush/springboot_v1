@@ -12,6 +12,9 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.WebUtils;
 import javax.servlet.http.HttpServletRequest;
 
+/**
+ * 全局异常处理controller
+ */
 @Controller
 @RequestMapping("${server.error.path:${error.path:/error}}")
 public class GlobalErrorController implements ErrorController {
