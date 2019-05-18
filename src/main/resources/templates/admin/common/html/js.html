@@ -1,0 +1,29 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org" >
+<!-- JavaScript -->
+<div  th:fragment="onload_js">
+    <script th:inline="javascript">
+        window.rootPath=[[@{/}]];
+        window.permissions = [[${session.session_menuQX}]];
+    </script>
+	<script type="text/javascript" th:src="@{/admin/jquery/2.2.3/jquery.js}"></script>
+   
+    <!--主效果-->
+    <script type="text/javascript" th:src="@{/admin/assets/js/preloader.js}"></script>
+    <script type="text/javascript" th:src="@{/admin/assets/js/bootstrap.js}"></script>
+    <script type="text/javascript" th:src="@{/admin/assets/js/app.js}"></script>
+    <!-- head.js -->
+    <script type="text/javascript" th:src="@{/admin/assets/js/load.js}"></script>
+    <script type="text/javascript" th:src="@{/admin/assets/js/main.js}"></script>
+    <script type="text/javascript" th:src="@{/admin/assets/js/shiro.js}"></script>
+	<!-- jquery-validate 表单验证插件 -->
+	<script type="text/javascript" th:src="@{/admin/assets/js/validate/jquery.validate.min.js}"></script>
+	<script type="text/javascript" th:src="@{/admin/assets/js/validate/messages_zh.min.js}"></script>
+	<script type="text/javascript" th:src="@{/admin/assets/js/validate/jquery.validate.extend.js}"></script>
+	<!-- vueJS -->
+    <script type="text/javascript" th:src="@{/admin/assets/js/vue/vue.min.js}"></script>
+   
+	
+	
+	
+</div>
+   

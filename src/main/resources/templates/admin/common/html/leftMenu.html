@@ -1,0 +1,86 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<div  th:fragment="leftMenu">
+	<!-- 左边菜单 -->
+	<div id="skin-select">
+		<!-- PC端 LOGO -->
+	    <div id="logo">
+	     <h1>用户管理<span>v1</span></h1>
+	    </div>
+	<!--END PC端 LOGO -->
+	
+	<!--点击隐藏左边菜单栏按钮 -->
+	    <a id="toggle">
+	        <span class="entypo-menu"></span>
+	    </a>
+	    <!--END点击隐藏左边菜单栏按钮 -->
+	    <!-- PC端搜索按钮 -->
+	    <div class="dark">
+	        <form action="#">
+	            <span>
+					<input type="text" name="search" value="" class="search rounded id_search" placeholder="菜单搜索" autofocus />
+	            </span>
+	        </form>
+	    </div>
+	<!-- 手机端搜索按钮  有bug-->
+	    <div class="search-hover">
+	        <form id="demo-2">
+	            <input type="search" placeholder="Search4 Menu..." class="id_search">
+	        </form>
+	    </div>
+	
+	
+	
+	<!-- 左侧菜单栏 -->
+	    <div class="skin-part">
+	        <div id="tree-wrap">
+	            <div class="side-bar" th:each="menu,menuStat:${session.session_menu.nodes}">
+	                <ul class="topnav menu-left-nest">
+	                    <li>
+	                        <a href="#" style="border-left:0px solid!important;" class="title-menu-left">
+	                            <span  th:text="${menu.menu_name}"></span>
+	                            <i data-toggle="tooltip" th:classappend="${menu.menu_icon}" class="pull-right config-wrap"></i>
+	                        </a>
+	                    </li>
+	                    <th:bolck th:if=${menu.nodes!=null}>
+	                    <li th:each="caidan,caidanStat:${menu.nodes}">
+	                        <a class="tooltip-tip" th:href="@{${caidan.menu_url}}" target="mainFrame" th:title="${caidan.menu_name}">
+	                            <i th:classappend="${caidan.menu_icon}" class=""></i>
+								<span th:text="${caidan.menu_name}">用户管理</span>
+	                 		</a>
+	                    </li>
+	                    </th:bolck>
+	                </ul>
+	            </div>
+				<!--<div class="side-bar" >
+					<ul class="topnav menu-left-nest">
+						<li>
+							<a href="#" style="border-left:0px solid!important;" class="title-menu-left">
+
+								<span>系统设置</span>
+								<i data-toggle="tooltip"  class="pull-right config-wrap"></i>
+
+							</a>
+						</li>
+
+							<li>
+								<a class="tooltip-tip" target="mainFrame" >
+									<i  class=""></i>
+									<span >用户管理</span>
+								</a>
+							</li>
+
+
+
+
+					</ul>
+				</div>-->
+			</div>
+		</div>
+
+	        </div>
+	    </div>
+	    <!-- 左侧菜单栏 -->
+	</div>
+	<!-- 结束左边菜单栏 -->
+
+</div>

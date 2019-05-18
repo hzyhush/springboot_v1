@@ -1,6 +1,6 @@
 server:
   servlet:
-    context-path: /c-terminal
+    context-path: /springboot
 spring:
   profiles:
     active: dev
@@ -19,7 +19,7 @@ spring:
     suffix: .html #配置后缀
 
 mybatis:
-  mapper-locations: classpath:mapping/*.xml #mapper映射xml文件的所在路径
+  mapper-locations: classpath:mapping/**/*.xml #mapper映射xml文件的所在路径
   type-aliases-package: com.unicom.api.cterminal.entity #实体类映射文件的所在路径
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl #打印sql

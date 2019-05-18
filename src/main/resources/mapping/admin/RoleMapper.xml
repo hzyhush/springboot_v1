@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.unicom.api.cterminal.dao.RoleDao" >
+
+    <select id="findList" parameterType="String" resultType="com.unicom.api.cterminal.entity.admin.Role">
+        select role_id,role_name,role_description from sys_role
+        <where>
+            <if test="roleName != null and roleName != ''">
+                role_name like upper(CONCAT(CONCAT('%', #{roleName}),'%'))
+            </if>
+        </where>
+        order by role_id asc
+    </select>
+
+    <!--验证角色名称是否唯一 -->
+    <select id="checkNameUnique" resultType="Integer">
+        select count(*) from sys_role where role_name = #{role_name}
+        <if test="role_id != null and role_id != ''">
+            and role_id != #{role_id}
+        </if>
+    </select>
+
+    <insert id="saveRole" parameterType="com.unicom.api.cterminal.entity.admin.Role">
+        insert into sys_role(
+          role_id,
+          <if test="role_description != null and role_description != ''">role_description,</if>
+          role_name
+        )values (
+          #{role_id},
+          <if test="role_description != null and role_description != ''">#{role_description},</if>
+          #{role_name}
+        )
+    </insert>
+
+    <!-- 批量删除 -->
+    <delete id="deleteIdS"  parameterType="int">
+        delete from sys_role where role_id in
+        <foreach collection="array" item="id" index="index" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="updateRole" parameterType="com.unicom.api.cterminal.entity.admin.Role">
+        update sys_role set
+        <if test="role_description != null and role_description != ''">role_description = #{role_description},</if>
+        role_name = #{role_name} where role_id = #{role_id}
+    </update>
+</mapper>

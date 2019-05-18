@@ -1,8 +1,15 @@
 package com.unicom.api.cterminal.service.impl;
 
-import com.unicom.api.cterminal.dao.UserMapper;
-import com.unicom.api.cterminal.entity.User;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.unicom.api.cterminal.dao.UserDao;
+import com.unicom.api.cterminal.dao.UserRoleDao;
+import com.unicom.api.cterminal.entity.admin.UserRole;
+import com.unicom.api.cterminal.entity.other.Tablepar;
+import com.unicom.api.cterminal.entity.admin.User;
 import com.unicom.api.cterminal.service.UserService;
+import com.unicom.api.cterminal.util.CreateSalt;
+import org.apache.shiro.crypto.hash.SimpleHash;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,30 +17,39 @@ import javax.annotation.Resource;
 import java.util.List;
 import java.util.Set;
 
+
 @Service
 @Transactional
 public class UserServiceImpl implements UserService{
 
     @Resource
-    private UserMapper userMapper;
+    private UserDao userMapper;
+    @Resource
+    private UserRoleDao userRoleDao;
 
     /**
      * 根据用户名查询
-     * @param userName
+     * @param userName 用户名
      * @return
      */
     public User findByUserName(String userName) {
         return userMapper.findByUserName(userName);
     }
 
-    @Override
-    public List<User> findAll() {
-        return userMapper.findAll();
-    }
+    /**
+     * 分页查询
+     * @return
+     */
+    public PageInfo<User> listPage(Tablepar tablepar, String name){
+        PageHelper.startPage(tablepar.getPageNum(),tablepar.getPageSize());
+        List<User> list = userMapper.findList(name);
+        PageInfo<User> info = new PageInfo<User>(list);
+        return info;
+    };
 
     /**
      * 查询用户角色信息
-     * @param userName
+     * @param userName 用户名
      * @return
      */
     @Override
@@ -43,7 +59,7 @@ public class UserServiceImpl implements UserService{
 
     /**
      * 查询用户权限
-     * @param userName
+     * @param userName 用户名
      * @return
      */
     @Override
@@ -53,11 +69,85 @@ public class UserServiceImpl implements UserService{
 
     /**
      * 查询单个用户信息
-     * @param user_id
+     * @param user_id 用户编号
      * @return
      */
     @Override
     public User findById(Integer user_id) {
         return userMapper.findById(user_id);
     }
+
+    /**
+     * 验证用户名是否唯一
+     * @param userName 用户名
+     * @return
+     */
+    public boolean checkLoginNameUnique(String userName) {
+        Integer count = userMapper.checkLoginNameUnique(userName);
+        if(count > 0){
+           return false;
+        }
+        return true;
+    }
+
+    /***
+     * 新增用户
+     * @param user 用户实体
+     * @return
+     */
+    @Transactional(rollbackFor=Exception.class)
+    public boolean saveUser(User user,List<Integer> roles){
+        Integer user_id = userMapper.selectAutoId();//自增长编号
+        String salt = CreateSalt.getSalt();//盐值
+        user.setUser_id(user_id);
+        user.setUser_salt(salt);
+        user.setUser_pwd(new SimpleHash("MD5", user.getUser_pwd(), salt, 2).toString());
+        boolean flag = userMapper.saveUser(user);
+        if(flag && roles != null){
+            for (Integer role:roles) {
+                UserRole userRole = new UserRole(user_id,role);
+                userRoleDao.saveUserRole(userRole);
+            }
+        }
+        return flag;
+    };
+
+    /**
+     * 修改用户信息
+     * @param user 用户实体
+     * @param roles 角色集合
+     * @return
+     */
+    public boolean updateUser(User user, List<Integer> roles){
+        boolean flag = userRoleDao.delUserId(user.getUser_id());//先删除用户角色
+        if(roles != null){
+            for (Integer role:roles) {
+                UserRole userRole = new UserRole(user.getUser_id(),role);
+                userRoleDao.saveUserRole(userRole);
+            }
+        }
+        return true;
+    };
+
+    /**
+     * 修改用户密码
+     * @param user 用户实体
+     * @return
+     */
+    public boolean updatePwd(User user){
+        String salt = CreateSalt.getSalt();//盐值
+        user.setUser_salt(salt);
+        user.setUser_pwd(new SimpleHash("MD5", user.getUser_pwd(), salt, 2).toString());
+        return userMapper.updatePwd(user);
+    };
+
+    /**
+     * 批量删除用户
+     * @param ids 用户编号数组
+     * @return
+     */
+    public boolean delIds(int[] ids){
+        return userMapper.delIds(ids);
+    };
+
 }

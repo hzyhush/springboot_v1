@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.unicom.api.cterminal.dao.MenuDao" >
+
+  <!--查询菜单信息-->
+    <select id="findList" parameterType="String" resultType="com.unicom.api.cterminal.entity.admin.Menu">
+        select menu_id,menu_name,menu_icon,menu_url,permission,menu_type,menu_descripion from sys_menu
+        where parent_id != 0
+        <if test="menuName != null and menuName != ''">
+          and menu_name like upper(CONCAT(CONCAT('%', #{menuName}),'%'))
+        </if>
+        order by menu_type asc,parent_id asc,order_number asc
+    </select>
+
+    <select id="findChildrenMenu" resultType="com.unicom.api.cterminal.entity.admin.Menu">
+        select menu_name,menu_icon,menu_id,menu_url  from sys_menu where parent_id = #{menu_id}
+        <if test="!flag">
+            and menu_type != 2
+        </if>
+        order by order_number asc
+    </select>
+
+    <!--验证菜单名称是否唯一 -->
+    <select id="checkMenuNameUnique" resultType="Integer">
+        select count(*) from sys_menu where menu_name = #{menu_name}
+        <if test="menu_id != null and menu_id != ''">
+            and menu_id != #{menu_id}
+        </if>
+    </select>
+
+    <!--验证请求路径是否唯一 -->
+    <select id="checkURLUnique" resultType="Integer">
+        select count(*) from sys_menu where menu_url = #{menu_url}
+        <if test="menu_id != null and menu_id != ''">
+            and menu_id != #{menu_id}
+        </if>
+    </select>
+
+    <!--验证权限名称是否唯一 -->
+    <select id="checkPermsUnique" resultType="Integer">
+        select count(*) from sys_menu where permission = #{permission}
+        <if test="menu_id != null and menu_id != ''">
+            and menu_id != #{menu_id}
+        </if>
+    </select>
+
+    <insert id="saveMenu" parameterType="com.unicom.api.cterminal.entity.admin.Menu">
+        insert into sys_menu(
+          <if test="menu_icon != null and menu_icon != ''">menu_icon,</if>
+          <if test="menu_url != null and menu_url != ''">menu_url,</if>
+          <if test="parent_id != null and parent_id != ''">parent_id,</if>
+          <if test="permission != null and permission != ''">permission,</if>
+          <if test="order_number != null and order_number != ''">order_number,</if>
+          <if test="menu_descripion != null and menu_descripion != ''">menu_descripion,</if>
+          menu_type,
+          menu_name
+        )values (
+          <if test="menu_icon != null and menu_icon != ''">#{menu_icon},</if>
+          <if test="menu_url != null and menu_url != ''">#{menu_url},</if>
+          <if test="parent_id != null and parent_id != ''">#{parent_id},</if>
+          <if test="permission != null and permission != ''">#{permission},</if>
+          <if test="order_number != null and order_number != ''">#{order_number},</if>
+          <if test="menu_descripion != null and menu_descripion != ''">#{menu_descripion},</if>
+          #{menu_type},
+          #{menu_name}
+        )
+    </insert>
+
+    <update id="updateMenu" parameterType="com.unicom.api.cterminal.entity.admin.Menu">
+        update sys_menu set
+        <choose>
+            <when test="menu_icon != null and menu_icon != ''">menu_icon = #{menu_icon},</when>
+            <otherwise>menu_icon = null,</otherwise>
+        </choose>
+        <choose>
+            <when test="menu_url != null and menu_url != ''">menu_url = #{menu_url},</when>
+            <otherwise>menu_url = null,</otherwise>
+        </choose>
+        <choose>
+            <when test="permission != null and permission != ''">permission = #{permission},</when>
+            <otherwise>permission = null,</otherwise>
+        </choose>
+        <choose>
+            <when test="order_number != null and order_number != ''">order_number = #{order_number},</when>
+            <otherwise>order_number = null,</otherwise>
+        </choose>
+        menu_type = #{menu_type},menu_name = #{menu_name},menu_descripion = #{menu_descripion},parent_id = #{parent_id}
+        where menu_id = #{menu_id}
+    </update>
+</mapper>
