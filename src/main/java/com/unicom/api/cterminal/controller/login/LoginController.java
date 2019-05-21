@@ -2,7 +2,6 @@ package com.unicom.api.cterminal.controller.login;
 
 import com.unicom.api.cterminal.controller.base.BaseController;
 import com.unicom.api.cterminal.entity.admin.Menu;
-import com.unicom.api.cterminal.entity.other.BootstrapThree;
 import com.unicom.api.cterminal.service.MenuService;
 import com.unicom.api.cterminal.service.UserService;
 import com.unicom.api.cterminal.util.Const;

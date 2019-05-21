@@ -21,8 +21,6 @@ public class MyExceptionResolver implements HandlerExceptionResolver {
 
         //如果是shiro无权操作，因为shiro 在操作auno等一部分不进行转发至无权限url
         if(e instanceof UnauthorizedException){
-            System.out.println("shiro无权限异常开始");
-            logger.error(e.getMessage(),e);
             ModelAndView mv = new ModelAndView("/error/403");
             return mv;
         }

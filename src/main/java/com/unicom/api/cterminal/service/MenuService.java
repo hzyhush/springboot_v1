@@ -2,9 +2,7 @@ package com.unicom.api.cterminal.service;
 
 import com.github.pagehelper.PageInfo;
 import com.unicom.api.cterminal.entity.admin.Menu;
-import com.unicom.api.cterminal.entity.other.BootstrapThree;
 import com.unicom.api.cterminal.entity.other.Tablepar;
-import org.apache.ibatis.annotations.Param;
 
 public interface MenuService {
 

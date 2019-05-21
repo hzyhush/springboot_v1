@@ -1,7 +1,6 @@
 package com.unicom.api.cterminal.dao;
 
 import com.unicom.api.cterminal.entity.admin.Menu;
-import com.unicom.api.cterminal.entity.other.BootstrapThree;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;

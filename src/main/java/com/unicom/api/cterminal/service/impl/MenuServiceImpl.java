@@ -4,18 +4,13 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.unicom.api.cterminal.dao.MenuDao;
 import com.unicom.api.cterminal.entity.admin.Menu;
-import com.unicom.api.cterminal.entity.other.BootstrapThree;
 import com.unicom.api.cterminal.entity.other.Tablepar;
 import com.unicom.api.cterminal.service.MenuService;
 import com.unicom.api.cterminal.util.Const;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +51,6 @@ public class MenuServiceImpl implements MenuService {
         for (Menu item:menuList) {
             if(item.isChilren()){
                 item.setNodes(getMenuTree(item,flag,role_id));
-
             }
         }
         return menuList;
