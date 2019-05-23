@@ -2,12 +2,13 @@ package com.unicom.api.cterminal.config;
 
 import at.pollux.thymeleaf.shiro.dialect.ShiroDialect;
 import com.unicom.api.cterminal.resolver.MyExceptionResolver;
+import com.unicom.api.cterminal.config.shiro.RedisCacheManager;
+import com.unicom.api.cterminal.config.shiro.RedisSessionDAO;
+import com.unicom.api.cterminal.config.shiro.ShiroSessionManager;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
-import org.apache.shiro.cache.CacheManager;
-import org.apache.shiro.cache.MemoryConstrainedCacheManager;
-import org.apache.shiro.cache.ehcache.EhCacheManager;
 import org.apache.shiro.mgt.RememberMeManager;
 import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
@@ -20,9 +21,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.web.servlet.HandlerExceptionResolver;
-
-import javax.servlet.Filter;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -70,10 +68,13 @@ public class ShiroConfig {
     @Bean
     public SecurityManager securityManager(){
         DefaultWebSecurityManager securityManager=new DefaultWebSecurityManager();
-        //securityManager.setCacheManager(cacheManager);
         //securityManager.setRememberMeManager(manager);//记住Cookie
         //设置realm
         securityManager.setRealm(myShiroRealm());
+        // session管理器
+        securityManager.setSessionManager(sessionManager());
+        //设置cache
+        securityManager.setCacheManager(redisCacheManager());
         return securityManager;
     }
 
@@ -88,8 +89,6 @@ public class ShiroConfig {
         myShiroRealm.setCredentialsMatcher(hashedCredentialsMatcher());
         return myShiroRealm;
     }
-
-
 
     /**
      * 哈希密码比较器。在myShiroRealm中作用参数使用
@@ -118,17 +117,36 @@ public class ShiroConfig {
         return manager;
     }
 
-    /**
-     * 配置cache缓存
-     * @return
-     */
     @Bean
-    public EhCacheManager ehCacheManager(){
-        EhCacheManager cacheManager=new EhCacheManager();
-        cacheManager.setCacheManagerConfigFile("classpath:ehcache/ehcache-shiro.xml");
-       return cacheManager;
+    public RedisCacheManager redisCacheManager() {
+        return new RedisCacheManager();
     }
 
+    @Bean
+    public RedisSessionDAO redisSessionDAO(){
+        return new RedisSessionDAO();
+    }
+
+    @Bean
+    public SessionManager sessionManager() {
+        ShiroSessionManager sessionManager = new ShiroSessionManager();
+        sessionManager.setSessionDAO(redisSessionDAO());
+        sessionManager.setGlobalSessionTimeout(1800000);
+        sessionManager.setCacheManager(redisCacheManager());
+        sessionManager.setDeleteInvalidSessions(true);//删除过期的session
+        sessionManager.setSessionIdCookieEnabled(true);
+        sessionManager.setSessionIdCookie(sessionIdCookie());
+        return sessionManager;
+    }
+
+    //设置cookie
+    @Bean
+    public Cookie sessionIdCookie(){
+        Cookie sessionIdCookie=new SimpleCookie("STID");
+        sessionIdCookie.setMaxAge(-1);
+        sessionIdCookie.setHttpOnly(true);
+        return sessionIdCookie;
+    }
 
 
     /**

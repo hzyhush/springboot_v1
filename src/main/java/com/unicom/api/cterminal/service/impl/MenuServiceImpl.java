@@ -9,6 +9,9 @@ import com.unicom.api.cterminal.service.MenuService;
 import com.unicom.api.cterminal.util.Const;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.HashMap;
@@ -16,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@CacheConfig(cacheNames = "menu")
 @Transactional
 public class MenuServiceImpl implements MenuService {
 
@@ -29,6 +33,7 @@ public class MenuServiceImpl implements MenuService {
      * @param role_id 选择的角色编号,主要用来判断菜单是否选中，可以为null
      * @return
      */
+    @Cacheable(key = "getMethodName()+'_'+#flag+'_'+#role_id",unless = "#result == null")
     public Menu getMenuTree(boolean flag,Integer role_id){
         Menu menu = menuDao.findByRoot();
         if(menu != null){
@@ -150,6 +155,7 @@ public class MenuServiceImpl implements MenuService {
      * @param menu 菜单实体
      * @return
      */
+    @CacheEvict(allEntries = true)
     public boolean saveMenu(Menu menu){
         //判断为目录的时候添加父id为0
         if(menu.getMenu_type() == 0){
@@ -181,6 +187,7 @@ public class MenuServiceImpl implements MenuService {
      * @param menu 要修改的菜单实体
      * @return 是否成功
      */
+    @CacheEvict(allEntries = true )
     public boolean updateMenu(Menu menu){
         //判断为目录的时候添加父id为0
         if(menu.getMenu_type() == 0){
@@ -194,6 +201,7 @@ public class MenuServiceImpl implements MenuService {
      * @param ids 菜单编号数组
      * @return 是否成功
      */
+    @CacheEvict(allEntries = true)
     public boolean delIds(int[] ids){
         for (int itme:ids) {
             Menu menu = menuDao.findById(itme);
@@ -207,6 +215,7 @@ public class MenuServiceImpl implements MenuService {
      * 递归删除子菜单
      * @param menu 父菜单
      */
+    @CacheEvict(allEntries = true)
     public void deleteChildren(Menu menu){
         List<Menu> childrenList = menuDao.findChildrenMenu(menu.getMenu_id(),true);
         if(childrenList != null){

@@ -12,16 +12,18 @@ import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.authz.SimpleAuthorizationInfo;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,6 +39,8 @@ public class LoginController extends BaseController {
     private MenuService menuService;
     @Resource
     private UserService userService;
+    @Resource
+    private RedisTemplate<String,Object> redisTemplate;
 
     /**
      * 去登录页
@@ -52,7 +56,8 @@ public class LoginController extends BaseController {
      * @return
      */
     @GetMapping("/main")
-    public String main() {
+    @RequiresPermissions("system:index")
+    public String main(Model model) {
         return "/admin/main";
     }
 
@@ -61,7 +66,18 @@ public class LoginController extends BaseController {
      * @return
      */
     @GetMapping(value = "/index")
-    public String index(){
+    public String index(Model model,HttpSession session){
+        //获取首页左侧菜单
+        Menu menu = menuService.getMenuTree(false,null);
+        if(menu != null){
+            model.addAttribute(Const.MENULIST,menu);
+            //判断是否将用户权限存储到redis，没有就获取用户权限并存储到session中
+            Set<String> menuQX = (Set<String>)redisTemplate.opsForValue().get("user::findMenuQX_"+getUserName());
+            if(menuQX == null){
+                //获取用户权限，并保存到session中
+                session.setAttribute(Const.MENUQX,userService.findMenuQX(getUserName()));
+            }
+        }
         return "/admin/index";
     }
 
@@ -81,22 +97,25 @@ public class LoginController extends BaseController {
      * @return
      */
     @PostMapping(value="/login")
-    public String login(HttpSession session,String userName,String password,String code,Model model){
+    public String login(HttpSession session,String username,String password,String code,Model model){
         try {
             String sesionCode = (String)session.getAttribute(Const.CAPTCHA_KEY);
             if(StringUtils.isNotBlank(sesionCode) && code.equals(sesionCode.toLowerCase())){//验证码验证成功
                 Subject subject = SecurityUtils.getSubject();
-                UsernamePasswordToken token = new UsernamePasswordToken(userName,password);
+                UsernamePasswordToken token = new UsernamePasswordToken(username,password);
                 subject.login(token);//执行到这步如果没有出现异常说明登录成功
-                //登录成功后获取菜单目录，并保存到session中
-                Menu menu = menuService.getMenuTree(true,null);
-                if(menu != null){
-                    session.setAttribute(Const.MENUQX,userService.findMenuQX(getUser().getUser_name()));
-                    session.setAttribute(Const.MENULIST,menu);
+                //用户第一次登陆成功后，会将权限存储在redisli
+                Object user = redisTemplate.opsForValue().get("shiro_cache:com.unicom.api.cterminal.config.ShiroRealm.authorizationCache:"+username);
+                //说明已经登陆过一次，不允许重复登陆，回到登录页面
+                if(user != null){
+                    model.addAttribute("hasmess", true);
+                }else{
+                    return "redirect:/index";
                 }
-                return "redirect:/index";
+            }else{
+                model.addAttribute("errormess", "验证码输入错误!");
             }
-            model.addAttribute("errormess", "验证码输入错误!");
+
         }catch (IncorrectCredentialsException ice){
             model.addAttribute("errormess", "账号或密码错误!");
         }catch (UnknownAccountException uae){
@@ -106,7 +125,7 @@ public class LoginController extends BaseController {
         }catch (Exception e){
             logger.error(e.toString(),e);
         }
-        model.addAttribute("userName", userName);
+        model.addAttribute("username", username);
         return "/login";
     }
 
@@ -133,5 +152,11 @@ public class LoginController extends BaseController {
 
         // 将验证码存储在session以便登录时校验
         session.setAttribute(Const.CAPTCHA_KEY, verifyCode.toLowerCase());
+    }
+
+    //被踢出后跳转的页面
+    @RequestMapping(value = "/kickout", method = RequestMethod.GET)
+    public String kickOut() {
+        return "/login";
     }
 }

@@ -109,7 +109,7 @@
                             <button type="button" class="close" data-dismiss="alert" aria-label="Close" style="right:0px;"><span aria-hidden="true">&times;</span></button>
                         </div>
                         <h2>LOGIN</h2>
-                        <input type="text" placeholder="UserName/TeL" autofocus="autofocus" th:value="${userName}" name="userName" class="userName test"/>
+                        <input type="text" placeholder="UserName/TeL" autofocus="autofocus" th:value="${username}" name="username" class="username test"/>
                         <input type="password" placeholder="Password" value="" name="password" class="password test"/>
                         <input type="text" placeholder="Code" style="margin-bottom: 20px;width:152px" name="code" class="code test"/>
                         <div class="login-img" style="display:inline-block">
@@ -137,10 +137,10 @@
                 </div>
                 <div class="modal-p">
                     <!--<h2 style="text-align: center;">提示信息</h2>-->
-                    <p class="modal-error-mess">该用户已经登录了，是否继续 ？</p>
+                    <p class="modal-error-mess">该用户已经登录了，不允许重复登陆。</p>
                     <div class="modal-p">
                         <button type="button" class="btn btn-default" data-dismiss="modal" >取消</button>
-                        <button type="button" class="btn btn-primary contiue" data-dismiss="modal">继续</button>
+                        <button type="button" class="btn btn-primary contiue" data-dismiss="modal">确定</button>
                     </div>
                 </div>
             </div>
@@ -183,23 +183,21 @@
     $('.test').on('click',function(){
         $(this).css('border',"1px solid transparent");
     })
-    $('.contiue').on('click',function(){
-        location.href="/handlehas";
-    })
+
 
 
     function check() {
-        var userName=$('.userName').val().trim();
+        var username=$('.username').val().trim();
         var password=$('.password').val().trim();
         var code=$('.code').val().trim();
-        console.log(userName);
+        console.log(username);
         console.log(password);
         console.log(code);
         var count=1;
-        if(userName==null || userName==""){
+        if(username==null || username==""){
             $('.error-mess').text("登录账号不能为空!");
             $('.alert-danger').css('display','block');
-            $('.userName').css('border-color',"#a94442");
+            $('.username').css('border-color',"#a94442");
             count=0;
             return false;
         }

@@ -28,12 +28,12 @@ public class MenuController extends BaseController {
     private MenuService menuService;
 
     /**
-     * 去用户页面
+     * 去菜单页面
      * @return
      */
     @GetMapping(value = "/goMenu")
     @RequiresPermissions("menu:view")
-    public String goUser(Model model){
+    public String goMenu(Model model){
         setTitle(model,new TitleVo("菜单列表","菜单管理",true,"欢迎进入菜单页面",false,false));
         return prefix+"/list";
     }

@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootApplication
 @MapperScan("com.unicom.api.cterminal.dao")//扫描dao层 @EnableTransactionManagement
-//@EnableCaching//开启缓存
+@EnableCaching//开启缓存
 public class CTerminalApplication {
 
     public static void main(String[] args) {

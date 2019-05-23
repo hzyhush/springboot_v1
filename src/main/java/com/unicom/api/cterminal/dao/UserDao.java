@@ -31,7 +31,7 @@ public interface UserDao {
      * @return
      */
     @Select("select r.role_name from sys_user_role ur inner join sys_role r on ur.role_id = r.role_id " +
-            "where user_id = (select user_id from sys_user where user_name = #{userName} and user_status =1)")
+            "where user_id = (select user_id from sys_user where user_name = #{userName} and user_status =0)")
     Set<String> findRoleName(@Param("userName") String userName);
 
     /**
@@ -40,8 +40,8 @@ public interface UserDao {
      * @return
      */
     @Select("select permission from sys_user u inner join sys_user_role ur on ur.user_id = u.user_id inner join sys_role r on r.role_id = ur.role_id " +
-            "inner join sys_role_menu rm on rm.role_id = r.role_id inner join sys_menu m on m.menu_id = rm.menu_id " +
-            "where u.user_name =#{userName} and m.menu_type !=0 and permission  is not null and permission != ''")
+            "inner join sys_role_menu rm on rm.role_id = r.role_id inner join sys_menu m on m.menu_id = rm.menu_id  " +
+            "where u.user_name =#{userName} and permission  is not null and permission != '' group by permission")
     Set<String> findMenuQX(@Param("userName") String userName);
 
     /**

@@ -10,6 +10,9 @@ import com.unicom.api.cterminal.entity.admin.User;
 import com.unicom.api.cterminal.service.UserService;
 import com.unicom.api.cterminal.util.CreateSalt;
 import org.apache.shiro.crypto.hash.SimpleHash;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +22,7 @@ import java.util.Set;
 
 
 @Service
+@CacheConfig(cacheNames = "user")
 @Transactional
 public class UserServiceImpl implements UserService{
 
@@ -62,6 +66,7 @@ public class UserServiceImpl implements UserService{
      * @param userName 用户名
      * @return
      */
+    @Cacheable(key = "getMethodName()+'_'+#userName",unless = "#result == null")
     @Override
     public Set<String> findMenuQX(String userName) {
         return userMapper.findMenuQX(userName);
@@ -95,7 +100,6 @@ public class UserServiceImpl implements UserService{
      * @param user 用户实体
      * @return
      */
-    @Transactional(rollbackFor=Exception.class)
     public boolean saveUser(User user,List<Integer> roles){
         Integer user_id = userMapper.selectAutoId();//自增长编号
         String salt = CreateSalt.getSalt();//盐值
@@ -118,6 +122,7 @@ public class UserServiceImpl implements UserService{
      * @param roles 角色集合
      * @return
      */
+    @CacheEvict(allEntries = true)
     public boolean updateUser(User user, List<Integer> roles){
         boolean flag = userRoleDao.delUserId(user.getUser_id());//先删除用户角色
         if(roles != null){

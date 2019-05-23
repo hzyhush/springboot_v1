@@ -29,7 +29,7 @@ public class RoleController extends BaseController {
      */
     @GetMapping(value = "/goRole")
     @RequiresPermissions("role:view")
-    public String goUser(Model model){
+    public String goRole(Model model){
         setTitle(model,new TitleVo("角色列表","角色管理",true,"欢迎进入角色管理页面",false,false));
         return prefix+"/list";
     }
