@@ -24,7 +24,7 @@ public class CTerminalApplicationTests {
 
     @Test
     public void contextLoads() {
-       Object user = redisTemplate.opsForValue().get("shiro_cache:com.unicom.api.cterminal.config.ShiroRealm.authorizationCache:hzy");
+       Object user = redisTemplate.opsForValue().get("shiro_cache:shiro-activeSessionCache:hzy");
        System.out.println(user);
     }
 
