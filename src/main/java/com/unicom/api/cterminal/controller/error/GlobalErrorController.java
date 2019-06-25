@@ -23,10 +23,10 @@ public class GlobalErrorController implements ErrorController {
     private ErrorInfoBuilder errorInfoBuilder;//错误信息的构建工具.
 
     private final static String DEFAULT_ERROR_VIEW = "error";//错误信息页
-    private final static String DEFAULT_403_VIEW = "/error/403";//错误信息页
-    private final static String DEFAULT_404_VIEW = "/error/404";//错误信息页
-    private final static String DEFAULT_405_VIEW = "/error/405";//错误信息页
-    private final static String DEFAULT_500_VIEW = "/error/500";//错误信息页
+    private final static String DEFAULT_403_VIEW = "error/403";//错误信息页
+    private final static String DEFAULT_404_VIEW = "error/404";//错误信息页
+    private final static String DEFAULT_405_VIEW = "error/405";//错误信息页
+    private final static String DEFAULT_500_VIEW = "error/500";//错误信息页
 
     /**
      * 情况1：若预期返回类型为text/html,则返回错误信息页(View).

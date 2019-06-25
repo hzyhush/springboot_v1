@@ -23,7 +23,7 @@ import java.util.List;
 @RequestMapping(value = "/menu")
 public class MenuController extends BaseController {
 
-    private String prefix = "/admin/menu";
+    private String prefix = "admin/menu";
     @Resource
     private MenuService menuService;
 

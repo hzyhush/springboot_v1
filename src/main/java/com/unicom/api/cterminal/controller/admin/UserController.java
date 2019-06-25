@@ -30,7 +30,7 @@ import java.util.logging.Logger;
 @Api(value = "用户管理",description = "用户管理")
 public class UserController extends BaseController {
 
-    private String prefix = "/admin/user";
+    private String prefix = "admin/user";
     @Autowired
     private UserService userService;
     @Autowired

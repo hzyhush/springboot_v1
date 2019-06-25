@@ -48,7 +48,7 @@ public class LoginController extends BaseController {
      */
     @GetMapping(value = "/")
     public ModelAndView toLogin(){
-        return new ModelAndView("/login");
+        return new ModelAndView("login");
     }
 
     /**
@@ -58,7 +58,7 @@ public class LoginController extends BaseController {
     @GetMapping("/main")
     @RequiresPermissions("system:index")
     public String main(Model model) {
-        return "/admin/main";
+        return "admin/main";
     }
 
     /**
@@ -78,7 +78,7 @@ public class LoginController extends BaseController {
                 session.setAttribute(Const.MENUQX,userService.findMenuQX(getUserName()));
             }
         }
-        return "/admin/index";
+        return "admin/index";
     }
 
     /**
@@ -89,7 +89,7 @@ public class LoginController extends BaseController {
     public String logout(){
         Subject subject = SecurityUtils.getSubject();
         subject.logout();
-        return "/login";
+        return "login";
     }
 
     /**
@@ -110,7 +110,7 @@ public class LoginController extends BaseController {
                 if(user != null){
                     model.addAttribute("hasmess", true);
                 }else{
-                    return "redirect:/index";
+                    return "redirect:index";
                 }
             }else{
                 model.addAttribute("errormess", "验证码输入错误!");
@@ -126,7 +126,7 @@ public class LoginController extends BaseController {
             logger.error(e.toString(),e);
         }
         model.addAttribute("username", username);
-        return "/login";
+        return "login";
     }
 
     /**
@@ -157,6 +157,6 @@ public class LoginController extends BaseController {
     //被踢出后跳转的页面
     @RequestMapping(value = "/kickout", method = RequestMethod.GET)
     public String kickOut() {
-        return "/login";
+        return "login";
     }
 }

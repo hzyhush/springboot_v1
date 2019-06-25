@@ -18,7 +18,7 @@ import javax.annotation.Resource;
 @RequestMapping(value = "/role")
 public class RoleController extends BaseController {
 
-    private String prefix = "/admin/role";
+    private String prefix = "admin/role";
     @Resource
     private RoleService roleService;
 

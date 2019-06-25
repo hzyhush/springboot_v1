@@ -1,12 +1,6 @@
 ##生产环境配置
 server:
-  port: 8080
-#  #https配置
-#  ssl:
-#    key-store: C:\cert\1712020_cs.chinaunicomdev.cn.pfx
-#    key-store-password: qPUWbsK2
-#    key-store-type: JKS
-
+  port: 80
 
 spring:
   datasource:
