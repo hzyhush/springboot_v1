@@ -1,10 +1,7 @@
 package com.unicom.api.cterminal.dao;
 
 import com.unicom.api.cterminal.entity.admin.User;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 import java.util.Set;
@@ -65,15 +62,10 @@ public interface UserDao {
      * @param user 用户实体
      * @return
      */
-    @Insert("insert into sys_user(user_name,user_pwd,user_salt,user_id) values(#{user_name},#{user_pwd},#{user_salt},#{user_id})")
+    @Insert("insert into sys_user(user_name,user_pwd,user_salt) values(#{user_name},#{user_pwd},#{user_salt})")
+    @SelectKey(keyProperty ="user_id",keyColumn = "user_id",resultType = Integer.class,before = false,statement = "select last_insert_id()")
     boolean saveUser(User user);
 
-    /**
-     * 查询自增长编号
-     * @return
-     */
-    @Select("select AUTO_INCREMENT id from INFORMATION_SCHEMA.TABLES where TABLE_NAME='sys_user' and TABLE_SCHEMA = 'springboot'")
-    Integer selectAutoId();
 
     /**
      * 修改密码

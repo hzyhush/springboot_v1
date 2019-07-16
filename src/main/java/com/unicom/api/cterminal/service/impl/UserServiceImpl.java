@@ -101,15 +101,13 @@ public class UserServiceImpl implements UserService{
      * @return
      */
     public boolean saveUser(User user,List<Integer> roles){
-        Integer user_id = userMapper.selectAutoId();//自增长编号
         String salt = CreateSalt.getSalt();//盐值
-        user.setUser_id(user_id);
         user.setUser_salt(salt);
         user.setUser_pwd(new SimpleHash("MD5", user.getUser_pwd(), salt, 2).toString());
         boolean flag = userMapper.saveUser(user);
         if(flag && roles != null){
             for (Integer role:roles) {
-                UserRole userRole = new UserRole(user_id,role);
+                UserRole userRole = new UserRole(user.getUser_id(),role);
                 userRoleDao.saveUserRole(userRole);
             }
         }
