@@ -52,6 +52,7 @@ public class UserController extends BaseController {
      * @return
      */
     @GetMapping(value = "/goAdd")
+    @RequiresPermissions("user:save")
     public String goAdd(Model model){
         List<Role> roles = roleService.findAll();
         model.addAttribute("roles",roles);
@@ -111,6 +112,7 @@ public class UserController extends BaseController {
      * @return
      */
     @GetMapping(value = "/goEdit/{id}")
+    @RequiresPermissions("user:update")
     public String goEdit(@PathVariable("id") Integer user_id, Model model){
         List<Role> roles = roleService.findUseRole(user_id);
         User user = userService.findById(user_id);
@@ -138,6 +140,7 @@ public class UserController extends BaseController {
      * @return
      */
     @GetMapping(value = "/goEditPwd/{id}")
+    @RequiresPermissions("user:updatePwd")
     public String goEditPwd(@PathVariable("id") Integer user_id, Model model){
         User user = userService.findById(user_id);
         model.addAttribute("user",user);
@@ -150,7 +153,7 @@ public class UserController extends BaseController {
      * @return
      */
     @PostMapping("/editPwd")
-    //@RequiresPermissions("user:updatePwd")
+    @RequiresPermissions("user:updatePwd")
     @ResponseBody
     public AjaxResult editPwd(User user){
         boolean flag = userService.updatePwd(user);

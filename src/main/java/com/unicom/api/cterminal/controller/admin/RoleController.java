@@ -24,7 +24,7 @@ public class RoleController extends BaseController {
 
 
     /**
-     * 去用户页面
+     * 去角色页面
      * @return
      */
     @GetMapping(value = "/goRole")
@@ -55,6 +55,7 @@ public class RoleController extends BaseController {
      * @return
      */
     @GetMapping(value = "/goAdd")
+    @RequiresPermissions("role:save")
     public String goAdd(){
         return prefix+"/add";
     }
@@ -89,6 +90,7 @@ public class RoleController extends BaseController {
      * @return
      */
     @GetMapping(value = "/goEdit/{id}")
+    @RequiresPermissions("role:update")
     public String goEdit(@PathVariable("id") Integer role_id,Model model){
         Role role = roleService.findById(role_id);
         model.addAttribute("role",role);

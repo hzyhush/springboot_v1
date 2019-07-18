@@ -58,6 +58,7 @@ public class MenuController extends BaseController {
      * @return
      */
     @GetMapping(value = "/goAdd")
+    @RequiresPermissions("menu:save")
     public String goAdd(){
         return prefix+"/add";
     }
@@ -143,10 +144,11 @@ public class MenuController extends BaseController {
     }
 
     /**
-     * 去修改-用户页面
+     * 去修改-角色页面
      * @return
      */
     @GetMapping(value = "/goEdit/{id}")
+    @RequiresPermissions("menu:update")
     public String goEdit(@PathVariable("id") Integer menu_id, Model model){
         Menu menu = menuService.findById(menu_id);
         Menu parentMenu = menuService.findParentMenu(menu.getParent_id());
