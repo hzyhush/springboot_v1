@@ -120,7 +120,6 @@ public class RoleServiceImpl implements RoleService {
      * @param array 角色编号数组
      * @return 是否删除
      */
-    @CacheEvict(cacheNames = "menu",allEntries = true)
     public boolean deleteIdS(int[] array){
         roleMenuDao.deleteIdS(array);
         return roleDao.deleteIdS(array);
@@ -132,7 +131,6 @@ public class RoleServiceImpl implements RoleService {
      * @param prem 权限编号数组
      * @return
      */
-    @CacheEvict(cacheNames = "menu",allEntries = true)
     public boolean updateRole(Role role,String prem){
         roleMenuDao.delete(role.getRole_id());//先删除原来的菜单信息
         List<RoleMenu> list = new ArrayList<RoleMenu>();

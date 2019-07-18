@@ -66,17 +66,17 @@ public class LoginController extends BaseController {
      * @return
      */
     @GetMapping(value = "/index")
-    public String index(Model model,HttpSession session){
+    public String index(Model model){
         //获取首页左侧菜单
         Menu menu = menuService.getMenuTree(false,null);
         if(menu != null){
             model.addAttribute(Const.MENULIST,menu);
-            //判断是否将用户权限存储到redis，没有就获取用户权限并存储到session中
+            /*//判断是否将用户权限存储到redis，没有就获取用户权限并存储到session中
             Set<String> menuQX = (Set<String>)redisTemplate.opsForValue().get("user::findMenuQX_"+getUserName());
             if(menuQX == null){
                 //获取用户权限，并保存到session中
                 session.setAttribute(Const.MENUQX,userService.findMenuQX(getUserName()));
-            }
+            }*/
         }
         return "admin/index";
     }
@@ -104,14 +104,16 @@ public class LoginController extends BaseController {
                 Subject subject = SecurityUtils.getSubject();
                 UsernamePasswordToken token = new UsernamePasswordToken(username,password);
                 subject.login(token);//执行到这步如果没有出现异常说明登录成功
-                //用户第一次登陆成功后，会将权限存储在redisli
+                /*//用户第一次登陆成功后，会将权限存储在redisli
                 Object user = redisTemplate.opsForValue().get("shiro_cache:com.unicom.api.cterminal.config.ShiroRealm.authorizationCache:"+username);
                 //说明已经登陆过一次，不允许重复登陆，回到登录页面
                 if(user != null){
                     model.addAttribute("hasmess", true);
                 }else{
                     return "redirect:index";
-                }
+                }*/
+                session.setAttribute(Const.MENUQX,userService.findMenuQX(getUserName()));
+                return "redirect:index";
             }else{
                 model.addAttribute("errormess", "验证码输入错误!");
             }

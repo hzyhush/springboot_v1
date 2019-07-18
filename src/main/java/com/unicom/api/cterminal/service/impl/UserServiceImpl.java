@@ -66,8 +66,6 @@ public class UserServiceImpl implements UserService{
      * @param userName 用户名
      * @return
      */
-    @Cacheable(key = "getMethodName()+'_'+#userName",unless = "#result == null")
-    @Override
     public Set<String> findMenuQX(String userName) {
         return userMapper.findMenuQX(userName);
     }
@@ -120,7 +118,6 @@ public class UserServiceImpl implements UserService{
      * @param roles 角色集合
      * @return
      */
-    @CacheEvict(allEntries = true)
     public boolean updateUser(User user, List<Integer> roles){
         boolean flag = userRoleDao.delUserId(user.getUser_id());//先删除用户角色
         if(roles != null){
